@@ -258,6 +258,6 @@ class GradeMLPredictor:
 
         prediction = self.clf.predict(self.model_data)
 
-        print(f"This if the xgboost prediction: {prediction}")
+        print(f"This if the model prediction: {prediction}")
 
         return "Aprobado" if prediction[0] == 1 else "Desaprobado"
