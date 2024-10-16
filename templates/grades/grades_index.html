@@ -1,52 +1,393 @@
 {% extends 'base.html' %}
 {% block page_content %}
-  <div class="container">
-    <div class="row shadow-lg p-3 mb-5 bg-body rounded">
-      <h1 class="display-1" style="text-align: center">Evaluaciones</h1>
-    </div>
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="row shadow-lg p-4 mb-4 bg-primary text-white rounded">
+    <h1 class="display-5 text-center">Historial de Evaluaciones</h1>
+  </div>
 
-    <div class="row">
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button class="btn btn-dark" type="button" onclick="location.href = '/grades/predict'">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-          </svg> Agregar
-        </button>
-      </div>
+  <!-- Barra de búsqueda y botón para agregar evaluación -->
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-4">
+      <select id="filterBy" class="form-select form-select-lg">
+        <option value="all">Filtrar por: Todos</option>
+        <option value="0">ID</option>
+        <option value="1">Nombre</option>
+        <option value="2">Curso</option>
+        <option value="5">Predicción IA</option>
+        <option value="6">Resultado del Profesor</option>
+      </select>
     </div>
+    <div class="col-md-5">
+      <input type="text" class="form-control form-control-lg" id="searchInput" placeholder="Buscar...">
+    </div>
+    <div class="col-md-3 text-md-start text-end">
+      <button class="btn btn-success btn-lg shadow-sm" type="button" onclick="location.href = '/grades/predict'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+        </svg> Agregar Nueva Evaluación
+      </button>
+    </div>
+  </div>
 
-    <div class="row shadow-lg p-3 mb-5 bg-body rounded">
-      <table class="table">
-        <thead>
+  <!-- Indicador de Resultados -->
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <span id="resultCount" class="text-secondary">Mostrando todos los resultados</span>
+    </div>
+  </div>
+
+  <!-- Tabla de Evaluaciones -->
+  <div class="row shadow-lg p-4 mb-5 bg-white rounded">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Nombres y Ap.</th>
+            <th scope="col">Nombres y Apellidos</th>
             <th scope="col">Curso</th>
             <th scope="col">Grado</th>
-            <th scope="col">Cal. Final</th>
-            <th scope="col">Evaluación [Predicción]</th>
-            <th scope="col">Evaluación [Real]</th>
+            <th scope="col">Calificación Final</th>
+            <th scope="col">Predicción IA</th>
+            <th scope="col">Resultado del Profesor</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="evaluationTable">
           {% for grade in grades %}
-            <tr>
-              <th scope="row">{{ grade.student_code }}</th>
-              <td>{{ grade.name }}</td>
-              <td>{{ grade.course }}</td>
-              <td>{{ grade.grade }}</td>
-              <td>{{ grade.gf }}</td>
-              <td>{{ grade.predicted_evaluation }}</td>
-              <td>{{ grade.final_evaluation }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="9" style="text-align: center">No hay datos para mostrar.</td>
-            </tr>
+          <tr>
+            <th scope="row">{{ grade.student_code }}</th>
+            <td>{{ grade.name }}</td>
+            <td>{{ grade.course }}</td>
+            <td>{{ grade.grade }}</td>
+            <td>{{ grade.gf }}</td>
+            <td>{{ grade.predicted_evaluation }}</td>
+            <td>{{ grade.final_evaluation }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center">No hay datos para mostrar.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
+
+  <!-- Resúmenes / Macros -->
+  <div class="row shadow-lg p-2 mb-5 bg-light rounded justify-content-center">
+    <div class="col-md-2 mb-3">
+      <div class="p-3 bg-success text-white text-center rounded">
+        <h5>Total de Evaluaciones</h5>
+        <h4 id="totalEvaluations">0</h4>
+      </div>
+    </div>
+    <div class="col-md-2 mb-3">
+      <div class="p-3 bg-primary text-white text-center rounded">
+        <h5>Aprobados (Predicción IA)</h5>
+        <h4 id="totalApprovedIA">0</h4>
+      </div>
+    </div>
+    <div class="col-md-2 mb-3">
+      <div class="p-3 bg-secondary text-white text-center rounded">
+        <h5>Aprobados (Resultado Real)</h5>
+        <h4 id="totalApprovedReal">0</h4>
+      </div>
+    </div>
+    <div class="col-md-2 mb-3">
+      <div class="p-3 bg-warning text-white text-center rounded">
+        <h5>Desaprobados (Predicción IA)</h5>
+        <h4 id="totalDisapprovedIA">0</h4>
+      </div>
+    </div>
+    <div class="col-md-2 mb-3">
+      <div class="p-3 bg-danger text-white text-center rounded">
+        <h5>Desaprobados (Resultado Real)</h5>
+        <h4 id="totalDisapprovedReal">0</h4>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-5 justify-content-center">
+    <div class="col-md-4">
+      <div class="p-3 bg-info text-white text-center rounded">
+        <h5>Precisión de la IA</h5>
+        <h4 id="accuracyIA">0%</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row shadow-lg p-4 mb-5 bg-white rounded">
+    <div class="col-md-4">
+      <h5 class="text-center">Número de Aprobados (IA vs Real)</h5>
+      <canvas id="approvalChart" style="height: 250px;"></canvas>
+    </div>
+    <div class="col-md-4">
+      <h5 class="text-center">Aprobados por Curso y Grado (Resultado Real)</h5>
+      <canvas id="courseGradeChart" style="height: 250px;"></canvas>
+    </div>
+    <div class="col-md-4">
+      <h5 class="text-center">Número de Desaprobados (Resultado Real)</h5>
+      <canvas id="disapprovalChart" style="height: 250px;"></canvas>
+    </div>
+  </div>
+  <div class="row shadow-lg p-4 mb-5 bg-white rounded">
+    <div class="col-md-6">
+      <h5 class="text-center">Distribución de Aprobados vs Desaprobados (IA)</h5>
+      <canvas id="pieChartIA" style="height: 250px;"></canvas>
+    </div>
+    <div class="col-md-6">
+      <h5 class="text-center">Distribución de Aprobados vs Desaprobados (Real)</h5>
+      <canvas id="pieChartReal" style="height: 250px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Script para búsqueda dinámica, resumen de resultados y gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.getElementById('searchInput').addEventListener('keyup', filterTable);
+  document.getElementById('filterBy').addEventListener('change', filterTable);
+
+  function filterTable() {
+    const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
+    const filterBy = document.getElementById('filterBy').value;
+    const rows = document.querySelectorAll('#evaluationTable tr');
+    let visibleCount = 0;
+    let totalApprovedIA = 0;
+    let totalApprovedReal = 0;
+    let totalDisapprovedIA = 0;
+    let totalDisapprovedReal = 0;
+
+    rows.forEach(row => {
+      let cellValue = "";
+
+      if (filterBy === "all") {
+        cellValue = Array.from(row.cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+      } else {
+        cellValue = row.cells[filterBy].textContent.toLowerCase().trim();
+      }
+
+      // Comparación exacta para "Aprobado" y "Desaprobado"
+      if (filterBy === "5" || filterBy === "6") {
+        if (cellValue === searchValue) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      } else {
+        if (cellValue.includes(searchValue)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      }
+
+      // Contar Aprobados y Desaprobados
+      const predictedResult = row.cells[5].textContent.trim();
+      const realResult = row.cells[6].textContent.trim();
+
+      if (predictedResult === "Aprobado") totalApprovedIA++;
+      if (predictedResult === "Desaprobado") totalDisapprovedIA++;
+      if (realResult === "Aprobado") totalApprovedReal++;
+      if (realResult === "Desaprobado") totalDisapprovedReal++;
+    });
+
+    // Actualizar el indicador de resultados
+    const resultCount = document.getElementById('resultCount');
+    if (visibleCount === rows.length) {
+      resultCount.textContent = "Mostrando todos los resultados";
+    } else {
+      resultCount.textContent = `Mostrando ${visibleCount} de ${rows.length} resultados`;
+    }
+
+    // Actualizar los valores de los resúmenes
+    document.getElementById('totalEvaluations').textContent = rows.length;
+    document.getElementById('totalApprovedIA').textContent = totalApprovedIA;
+    document.getElementById('totalApprovedReal').textContent = totalApprovedReal;
+    document.getElementById('totalDisapprovedIA').textContent = totalDisapprovedIA;
+    document.getElementById('totalDisapprovedReal').textContent = totalDisapprovedReal;
+
+    // Calcular y actualizar la precisión de la IA
+    const correctPredictions = Math.min(totalApprovedIA, totalApprovedReal) + Math.min(totalDisapprovedIA, totalDisapprovedReal);
+    const accuracy = rows.length > 0 ? ((correctPredictions / rows.length) * 100).toFixed(2) : 0;
+    document.getElementById('accuracyIA').textContent = `${accuracy}%`;
+
+    // Actualizar gráficos
+    updateCharts(totalApprovedIA, totalDisapprovedIA, totalApprovedReal, totalDisapprovedReal);
+  }
+
+  // Inicialización de los gráficos
+  let approvalChart, courseGradeChart, pieChartIA, pieChartReal, disapprovalChart;
+
+  function updateCharts(totalApprovedIA, totalDisapprovedIA, totalApprovedReal, totalDisapprovedReal) {
+    const approvalData = {
+      labels: ['IA Aprobados', 'IA Desaprobados', 'Real Aprobados', 'Real Desaprobados'],
+      datasets: [{
+        label: 'Evaluaciones',
+        data: [totalApprovedIA, totalDisapprovedIA, totalApprovedReal, totalDisapprovedReal],
+        backgroundColor: ['#4caf50', '#f44336', '#2196f3', '#ff9800'],
+      }]
+    };
+
+    if (approvalChart) {
+      approvalChart.data = approvalData;
+      approvalChart.update();
+    } else {
+      const ctx = document.getElementById('approvalChart').getContext('2d');
+      approvalChart = new Chart(ctx, {
+        type: 'bar',
+        data: approvalData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Número de Aprobados y Desaprobados (IA vs Real)'
+            }
+          }
+        }
+      });
+    }
+
+    // Gráficos de aprobación por curso y grado
+    const courseGradeData = {
+      labels: ['Grado 1', 'Grado 2', 'Grado 3', 'Grado 4', 'Grado 5', 'Grado 6'],
+      datasets: [{
+        label: 'Número de Aprobados (Resultado Real)',
+        data: [totalApprovedReal, 5, 8, 4, 6, 2], // Aquí puedes ajustar los valores según tus datos reales
+        backgroundColor: '#4caf50',
+      }]
+    };
+
+    if (courseGradeChart) {
+      courseGradeChart.data = courseGradeData;
+      courseGradeChart.update();
+    } else {
+      const ctx = document.getElementById('courseGradeChart').getContext('2d');
+      courseGradeChart = new Chart(ctx, {
+        type: 'bar',
+        data: courseGradeData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Aprobados por Curso y Grado (Resultado Real)'
+            }
+          }
+        }
+      });
+    }
+
+    // Gráfico de pastel para IA (Aprobados vs Desaprobados)
+    const pieIAData = {
+      labels: ['Aprobados IA', 'Desaprobados IA'],
+      datasets: [{
+        data: [totalApprovedIA, totalDisapprovedIA],
+        backgroundColor: ['#4caf50', '#f44336'],
+      }]
+    };
+
+    if (pieChartIA) {
+      pieChartIA.data = pieIAData;
+      pieChartIA.update();
+    } else {
+      const ctx = document.getElementById('pieChartIA').getContext('2d');
+      pieChartIA = new Chart(ctx, {
+        type: 'pie',
+        data: pieIAData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Distribución de Aprobados vs Desaprobados (IA)'
+            }
+          }
+        }
+      });
+    }
+
+    // Gráfico de pastel para Resultado Real (Aprobados vs Desaprobados)
+    const pieRealData = {
+      labels: ['Aprobados Real', 'Desaprobados Real'],
+      datasets: [{
+        data: [totalApprovedReal, totalDisapprovedReal],
+        backgroundColor: ['#2196f3', '#ff9800'],
+      }]
+    };
+
+    if (pieChartReal) {
+      pieChartReal.data = pieRealData;
+      pieChartReal.update();
+    } else {
+      const ctx = document.getElementById('pieChartReal').getContext('2d');
+      pieChartReal = new Chart(ctx, {
+        type: 'pie',
+        data: pieRealData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Distribución de Aprobados vs Desaprobados (Real)'
+            }
+          }
+        }
+      });
+    }
+
+    // Gráfico de barras para desaprobados por curso y grado
+    const disapprovalData = {
+      labels: ['Grado 1', 'Grado 2', 'Grado 3', 'Grado 4', 'Grado 5', 'Grado 6'],
+      datasets: [{
+        label: 'Número de Desaprobados (Resultado Real)',
+        data: [totalDisapprovedReal, 3, 6, 2, 7, 1], // Aquí puedes ajustar los valores según tus datos reales
+        backgroundColor: '#f44336',
+      }]
+    };
+
+    if (disapprovalChart) {
+      disapprovalChart.data = disapprovalData;
+      disapprovalChart.update();
+    } else {
+      const ctx = document.getElementById('disapprovalChart').getContext('2d');
+      disapprovalChart = new Chart(ctx, {
+        type: 'bar',
+        data: disapprovalData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Desaprobados por Curso y Grado (Resultado Real)'
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // Ejecutar la función de filtrado al cargar la página para actualizar los resúmenes
+  window.onload = filterTable;
+</script>
+
 {% endblock %}

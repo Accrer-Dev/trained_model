@@ -97,11 +97,9 @@
                 <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
               </div>
             {% endfor %}
-            
           </div>
 
           <div class="col-6">
-
             {{ form.activities.errors }}
             {% for check in form.activities %}
               <div class="form-check">
@@ -155,8 +153,8 @@
             {{ form.g1_conduct }}
           </div>
           <div class="col-12 text-center">
-            <a href="{% url 'index' %}" class="btn btn-secondary" style="vertical-align: bottom;">Volver</a>
-            <button type="submit" class="btn btn-primary" style="vertical-align: bottom;horizontal-align:right;">Predecir evaluación</button>
+            <button type="submit" class="btn btn-primary me-2">Predecir Evaluación</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Volver</a>
           </div>
         </form>
       </div>
