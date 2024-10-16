@@ -85,7 +85,7 @@
           </div>
           <div class="col-6">
             {{ form.study_time.errors }}
-            <label for="study-time-input" class="form-label">Tiempo de estudio semanal:</label>
+            <label for="{{ form.study_time.id_for_label }}" class="form-label">Tiempo de estudio semanal:</label>
             {{ form.study_time }}
           </div>
 

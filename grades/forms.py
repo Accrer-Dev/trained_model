@@ -452,33 +452,21 @@ class PredictionResultForm(forms.Form):
         required=True,
     )
     study_time = forms.CharField(
-        widget=forms.NumberInput(
+        widget=forms.Select(
             attrs={
-                "class": "form-control",
-                "placeholder": "Selecciona el tiempo",
-                "min": 0,
-                "max": 24,
-                "value": 0,
-            }
+                "class": "form-select",
+            },
+            choices=[
+                ("", "Selecciona el tiempo"),
+                (
+                    "2 a 5 horas",
+                    "2 a 5 horas",
+                ),
+                ("Menos de 2 a 5 horas horas", "Menos de 2 a 5 horas horas"),
+            ],
         ),
         required=True,
-        
-        # widget=forms.Select(
-        #     attrs={
-        #         "class": "form-select",
-        #     },
-        #     choices=[
-        #         ("", "Selecciona el tiempo"),
-        #         (
-        #             "2 a 5 horas",
-        #             "2 a 5 horas",
-        #         ),
-        #         ("Menos de 2 a 5 horas horas", "Menos de 2 a 5 horas horas"),
-        #     ],
-        # ),
-        # required=True,
     )
-    
 
     schoolsup = forms.CharField(
         widget=forms.CheckboxSelectMultiple(

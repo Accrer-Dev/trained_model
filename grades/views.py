@@ -36,18 +36,7 @@ def add(request):
         fedu = request.POST.get("fedu")
         # reason = request.POST.get("reason")
         travel_time = request.POST.get("travel_time")
-        #TODO:CAMBIO 01 - INICIO
         study_time = request.POST.get("study_time")
-        if study_time is not None and study_time.isdigit():
-            study_time = int(study_time)
-            if study_time < 2:
-                study_time = "Menos de 2 horas"
-            elif 2 <= study_time <= 5:
-                study_time = "2 a 5 horas"
-        else:
-            # Si no es válido, asignar un valor por defecto o manejar el error
-            study_time = "Menos de 2 horas"
-        #TODO:CAMBIO 01 - FIN
         schoolsup = request.POST.get("schoolsup", "false")
         activities = request.POST.get("activities", "false")
         higher = request.POST.get("higher", "false")
@@ -96,10 +85,7 @@ def add(request):
         # student_rate.r1 = r1
         student_rate.gf = gf
 
-        print(f"Datos recibidos: student_code={student_code}, name={name}, study_time={study_time}")
-
         student_rate.save()
-        
 
     return redirect("/grades")
 
@@ -125,18 +111,7 @@ def predict(request):
         fedu = request.POST.get("fedu")
         # reason = request.POST.get("reason")
         travel_time = request.POST.get("travel_time")
-        #TODO:CAMBIO 01 - INICIO
         study_time = request.POST.get("study_time")
-        if study_time is not None and study_time.isdigit():
-            study_time = int(study_time)
-            if study_time < 2:
-                study_time = "Menos de 2 horas"
-            elif 2 <= study_time <= 5:
-                study_time = "2 a 5 horas"
-        else:
-            # Si no es válido, asignar un valor por defecto o manejar el error
-            study_time = "Menos de 2 horas"
-        #TODO:CAMBIO 01 - FIN
         schoolsup = request.POST.get("schoolsup", "false")
         activities = request.POST.get("activities", "false")
         higher = request.POST.get("higher", "false")

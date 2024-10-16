@@ -9,7 +9,7 @@
       <div class="col-6">
         <br />
         <br />
-        <form class="row g-3" action="{% url 'save' %}" method="post">
+        <form class="row g-3" action="/grades/save" method="post">
           {% csrf_token %}
           <fieldset>
             <div class="col-12">
@@ -42,7 +42,6 @@
               {{ form.predicted_evaluation }}
             </div>
           </fieldset>
-          
           <fieldset style="display: none;">
             <div class="col-6">
               {{ form.gender.errors }}
