@@ -58,7 +58,7 @@
             <th scope="col">Calificación Final</th>
             <th scope="col">Predicción IA</th>
             <th scope="col">Resultado del Profesor</th>
-            <th scope="col">Verificación</th>
+            <th scope="col">Acertado</th>
           </tr>
         </thead>
         <tbody id="evaluationTable">
@@ -71,7 +71,13 @@
             <td>{{ grade.gf }}</td>
             <td>{{ grade.predicted_evaluation }}</td>
             <td>{{ grade.final_evaluation }}</td>
-            <td>{% if grade.predicted_evaluation == grade.final_evaluation %}Correcto{% else %}Incorrecto{% endif %}</td>
+            <td>
+              {% if grade.predicted_evaluation == grade.final_evaluation %}
+                <span class="text-success fw-bold" style="font-size: 1.2em;">Correcto</span>
+              {% else %}
+                <span class="text-danger fw-bold" style="font-size: 1.2em;">Incorrecto</span>
+              {% endif %}
+            </td>
           </tr>
           {% empty %}
           <tr>
