@@ -1,176 +1,191 @@
 {% extends 'base.html' %}
 {% block page_content %}
-  <div class="container my-5">
-    <div class="row justify-content-center">
-      <div class="col-md-10">
-        <div class="card shadow-lg border-0">
-          <div class="card-header bg-primary text-white text-center py-4 rounded-top">
-            <h1 class="display-5">Resultado de la Predicción</h1>
+  <div class="container">
+    <div class="row shadow-lg p-3 mb-5 bg-body rounded">
+      <h1 class="display-1" style="text-align: center">Resultado de la Predicción</h1>
+    </div>
+    <div class="row shadow-lg p-3 mb-5 bg-body rounded">
+      <div class="col-3"></div>
+      <div class="col-6">
+        <br />
+        <br />
+        <form class="row g-3" action="/grades/save" method="post">
+          {% csrf_token %}
+          <fieldset>
+            <div class="col-12">
+              {{ form.student_code.errors }}
+              <label for="{{ form.student_code.id_for_label }}" class="form-label">Código de Estudiante:</label>
+              {{ form.student_code }}
+            </div>
+            <div class="col-12">
+              {{ form.name.errors }}
+              <label for="{{ form.name.id_for_label }}" class="form-label">Nombres y Apellidos:</label>
+              {{ form.name }}
+            </div>
+            <div class="col-6">
+              {{ form.year.errors }}
+              <label for="{{ form.year.id_for_label }}" class="form-label">Año:</label>
+              {{ form.year }}
+            </div>
+            <div class="col-6">
+              {{ form.period.errors }}
+              <label for="{{ form.period.id_for_label }}" class="form-label">Periodo:</label>
+              {{ form.period }}
+            </div>
+            <div class="col-6">
+              {{ form.course.errors }}
+              <label for="{{ form.course.id_for_label }}" class="form-label">Curso:</label>
+              {{ form.course }}
+            </div>
+            <div class="col-12">
+              <label for="{{ form.predicted_evaluation.id_for_label }}" class="form-label">Evaluación de la IA:</label>
+              {{ form.predicted_evaluation }}
+            </div>
+          </fieldset>
+          <fieldset style="display: none;">
+            <div class="col-6">
+              {{ form.gender.errors }}
+              <label for="{{ form.gender.id_for_label }}" class="form-label">Género:</label>
+              {% for radio in form.gender %}
+                <div class="form-check">
+                  {{ radio.tag }}
+                  <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="col-6">
+              {{ form.age.errors }}
+              <label for="{{ form.age.id_for_label }}" class="form-label">Edad:</label>
+              {{ form.age }}
+            </div>
+            <div class="col-6">
+              {{ form.grade.errors }}
+              <label for="{{ form.grade.id_for_label }}" class="form-label">Grado/Año:</label>
+              {{ form.grade }}
+            </div>
+            <div class="col-6">
+              {{ form.family_size.errors }}
+              <label for="{{ form.family_size.id_for_label }}" class="form-label">Cant. personas en la familia:</label>
+              {{ form.family_size }}
+            </div>
+
+            <div class="col-6">
+              {{ form.parent_status.errors }}
+              <label for="{{ form.parent_status.id_for_label }}" class="form-label">Situación de los padres:</label>
+              {{ form.parent_status }}
+            </div>
+
+            <div class="col-6">
+              {{ form.medu.errors }}
+              <label for="{{ form.medu.id_for_label }}" class="form-label">Nivel de educación de la madre:</label>
+              {{ form.medu }}
+            </div>
+            <div class="col-6">
+              {{ form.fedu.errors }}
+              <label for="{{ form.fedu.id_for_label }}" class="form-label">Nivel de educación del padre:</label>
+              {{ form.fedu }}
+            </div>
+            <div class="col-6">
+              {{ form.travel_time.errors }}
+              <label for="{{ form.travel_time.id_for_label }}" class="form-label">Tiempo de viaje a la escuela (h):</label>
+              {{ form.travel_time }}
+            </div>
+            <div class="col-6">
+              {{ form.study_time.errors }}
+              <label for="{{ form.study_time.id_for_label }}" class="form-label">Tiempo de estudio semanal (h):</label>
+              {{ form.study_time }}
+            </div>
+
+            <div class="col-6">
+              {{ form.schoolsup.errors }}
+              {% for check in form.schoolsup %}
+                <div class="form-check">
+                  {{ check.tag }}
+                  <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="col-6">
+              {{ form.activities.errors }}
+              {% for check in form.activities %}
+                <div class="form-check">
+                  {{ check.tag }}
+                  <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="col-6">
+              {{ form.higher.errors }}
+              {% for check in form.higher %}
+                <div class="form-check">
+                  {{ check.tag }}
+                  <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="col-6">
+              {{ form.internet.errors }}
+              {% for check in form.internet %}
+                <div class="form-check">
+                  {{ check.tag }}
+                  <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="col-6">
+              {{ form.famrel.errors }}
+              <label for="{{ form.famrel.id_for_label }}" class="form-label">Calidad de las relaciones familiares:</label>
+              {{ form.famrel }}
+            </div>
+
+            <div class="col-6">
+              {{ form.freetime.errors }}
+              <label for="{{ form.freetime.id_for_label }}" class="form-label">Tiempo libre:</label>
+              {{ form.freetime }}
+            </div>
+
+            <div class="col-12">
+              {{ form.health.errors }}
+              <label for="{{ form.health.id_for_label }}" class="form-label">Estado de salud:</label>
+              {{ form.health }}
+            </div>
+
+            <div class="col-6">
+              {{ form.g1_conduct.errors }}
+              <label for="{{ form.g1_conduct.id_for_label }}" class="form-label">Cal. conducta:</label>
+              {{ form.g1_conduct }}
+            </div>
+          </fieldset>
+          <div class="col-6">
+            {{ form.gf.errors }}
+            <label for="{{ form.gf.id_for_label }}" class="form-label">Nota final:</label>
+            {{ form.gf }}
           </div>
-          <div class="card-body p-5">
-            <form class="row g-4" action="/grades/save" method="post">
-              {% csrf_token %}
-              <fieldset>
-                <div class="col-12">
-                  {{ form.student_code.errors }}
-                  <label for="{{ form.student_code.id_for_label }}" class="form-label">Código de Estudiante:</label>
-                  {{ form.student_code }}
-                </div>
-                <div class="col-12">
-                  {{ form.name.errors }}
-                  <label for="{{ form.name.id_for_label }}" class="form-label">Nombres y Apellidos:</label>
-                  {{ form.name }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.year.errors }}
-                  <label for="{{ form.year.id_for_label }}" class="form-label">Año:</label>
-                  {{ form.year }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.period.errors }}
-                  <label for="{{ form.period.id_for_label }}" class="form-label">Periodo:</label>
-                  {{ form.period }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.course.errors }}
-                  <label for="{{ form.course.id_for_label }}" class="form-label">Curso:</label>
-                  {{ form.course }}
-                </div>
-                <div class="col-12">
-                  <label for="{{ form.predicted_evaluation.id_for_label }}" class="form-label">Evaluación de la IA:</label>
-                  {{ form.predicted_evaluation }}
-                </div>
-              </fieldset>
-              <fieldset class="d-none">
-                <div class="col-md-6">
-                  {{ form.gender.errors }}
-                  <label for="{{ form.gender.id_for_label }}" class="form-label">Género:</label>
-                  {% for radio in form.gender %}
-                    <div class="form-check">
-                      {{ radio.tag }}
-                      <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-                    </div>
-                  {% endfor %}
-                </div>
-                <div class="col-md-6">
-                  {{ form.age.errors }}
-                  <label for="{{ form.age.id_for_label }}" class="form-label">Edad:</label>
-                  {{ form.age }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.grade.errors }}
-                  <label for="{{ form.grade.id_for_label }}" class="form-label">Grado/Año:</label>
-                  {{ form.grade }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.family_size.errors }}
-                  <label for="{{ form.family_size.id_for_label }}" class="form-label">Cant. personas en la familia:</label>
-                  {{ form.family_size }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.parent_status.errors }}
-                  <label for="{{ form.parent_status.id_for_label }}" class="form-label">Situación de los padres:</label>
-                  {{ form.parent_status }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.medu.errors }}
-                  <label for="{{ form.medu.id_for_label }}" class="form-label">Nivel de educación de la madre:</label>
-                  {{ form.medu }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.fedu.errors }}
-                  <label for="{{ form.fedu.id_for_label }}" class="form-label">Nivel de educación del padre:</label>
-                  {{ form.fedu }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.travel_time.errors }}
-                  <label for="{{ form.travel_time.id_for_label }}" class="form-label">Tiempo de viaje a la escuela (h):</label>
-                  {{ form.travel_time }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.study_time.errors }}
-                  <label for="{{ form.study_time.id_for_label }}" class="form-label">Tiempo de estudio semanal (h):</label>
-                  {{ form.study_time }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.schoolsup.errors }}
-                  {% for check in form.schoolsup %}
-                    <div class="form-check">
-                      {{ check.tag }}
-                      <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
-                    </div>
-                  {% endfor %}
-                </div>
-                <div class="col-md-6">
-                  {{ form.activities.errors }}
-                  {% for check in form.activities %}
-                    <div class="form-check">
-                      {{ check.tag }}
-                      <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
-                    </div>
-                  {% endfor %}
-                </div>
-                <div class="col-md-6">
-                  {{ form.higher.errors }}
-                  {% for check in form.higher %}
-                    <div class="form-check">
-                      {{ check.tag }}
-                      <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
-                    </div>
-                  {% endfor %}
-                </div>
-                <div class="col-md-6">
-                  {{ form.internet.errors }}
-                  {% for check in form.internet %}
-                    <div class="form-check">
-                      {{ check.tag }}
-                      <label class="form-check-label" for="{{ check.id_for_label }}">{{ check.choice_label }}</label>
-                    </div>
-                  {% endfor %}
-                </div>
-                <div class="col-md-6">
-                  {{ form.famrel.errors }}
-                  <label for="{{ form.famrel.id_for_label }}" class="form-label">Calidad de las relaciones familiares:</label>
-                  {{ form.famrel }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.freetime.errors }}
-                  <label for="{{ form.freetime.id_for_label }}" class="form-label">Tiempo libre:</label>
-                  {{ form.freetime }}
-                </div>
-                <div class="col-12">
-                  {{ form.health.errors }}
-                  <label for="{{ form.health.id_for_label }}" class="form-label">Estado de salud:</label>
-                  {{ form.health }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.g1_conduct.errors }}
-                  <label for="{{ form.g1_conduct.id_for_label }}" class="form-label">Cal. conducta:</label>
-                  {{ form.g1_conduct }}
-                </div>
-              </fieldset>
-              <div class="col-md-6 d-grid">
-                {{ form.gf.errors }}
-                <label for="{{ form.gf.id_for_label }}" class="form-label">Nota final:</label>
-                {{ form.gf }}
-              </div>
-              <div class="col-12">
-                {{ form.final_evaluation.errors }}
-                <label for="{{ form.final_evaluation.id_for_label }}" class="form-label">Evaluación del profesor:</label>
-                {{ form.final_evaluation }}
-              </div>
-              <div class="col-md-6 d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">Guardar evaluación</button>
-              </div>
-              <div class="col-md-6 d-grid">
-                <button class="btn btn-dark btn-lg" type="button" onclick="location.href = '/grades'">
-                  <i class="bi bi-x-circle"></i> Cancelar
-                </button>
-              </div>
-            </form>
+          <div class="col-12">
+            {{ form.final_evaluation.errors }}
+            <label for="{{ form.final_evaluation.id_for_label }}" class="form-label">Evaluación del profesor:</label>
+            {{ form.final_evaluation }}
           </div>
-        </div>
+          <div class="col-6">
+            <button type="submit" class="btn btn-primary" style="vertical-align: bottom;horizontal-align:right;">Guardar evaluación</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-dark" type="button" onclick="location.href = '/grades'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+              </svg> Cancelar
+            </button>
+
+          </div>
+        </form>
       </div>
+
+      <div class="col-3"></div>
     </div>
   </div>
 {% endblock %}
