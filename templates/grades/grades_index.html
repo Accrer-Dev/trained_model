@@ -3,13 +3,13 @@
 <div class="container mt-4" id="page-container">
   <!-- Botón de Modo Oscuro/Claro -->
   <div class="position-fixed top-0 end-0 m-3">
-    <button id="toggleDarkMode" class="btn btn-lg btn-outline-primary">
-      <i class="bi bi-moon-fill"></i> Cambiar Modo
+    <button id="toggleDarkMode" class="btn btn-outline-secondary d-flex align-items-center rounded-pill shadow-sm toggle-button" style="border-width: 2px;">
+      <i class="bi bi-moon-fill me-2"></i> <span id="toggleText">Cambiar a Modo Claro</span>
     </button>
   </div>
 
   <!-- Header -->
-  <div class="row shadow-lg p-4 mb-4 bg-primary text-white rounded">
+  <div class="row shadow-lg p-4 mb-4 bg-primary text-white rounded" id="header-container">
     <h1 class="display-5 text-center">Historial de Evaluaciones</h1>
   </div>
 
@@ -398,8 +398,7 @@
   // Modo Oscuro/Claro (Actualizado)
   const toggleButton = document.getElementById('toggleDarkMode');
   const icon = toggleButton.querySelector('i');
-  const text = document.createTextNode(' Cambiar Modo');
-  toggleButton.appendChild(text);
+  const toggleText = document.getElementById('toggleText');
 
   // Verificar el modo actual al cargar la página
   if (localStorage.getItem('darkMode') === 'enabled') {
@@ -416,7 +415,7 @@
 
   function enableDarkMode() {
     document.body.classList.add('bg-dark', 'text-light');
-    const containers = document.querySelectorAll('#page-container, #table-container, #summary-container, #charts-container');
+    const containers = document.querySelectorAll('#page-container, #table-container, #summary-container, #charts-container, #header-container');
     containers.forEach(container => {
       container.classList.add('bg-dark', 'text-light');
     });
@@ -426,12 +425,15 @@
     });
     icon.classList.remove('bi-moon-fill');
     icon.classList.add('bi-brightness-high-fill');
+    toggleText.textContent = ' Cambiar a Modo Claro';
+    toggleButton.classList.add('btn-outline-light');
+    toggleButton.classList.remove('btn-outline-secondary');
     localStorage.setItem('darkMode', 'enabled');
   }
 
   function disableDarkMode() {
     document.body.classList.remove('bg-dark', 'text-light');
-    const containers = document.querySelectorAll('#page-container, #table-container, #summary-container, #charts-container');
+    const containers = document.querySelectorAll('#page-container, #table-container, #summary-container, #charts-container, #header-container');
     containers.forEach(container => {
       container.classList.remove('bg-dark', 'text-light');
     });
@@ -441,6 +443,9 @@
     });
     icon.classList.remove('bi-brightness-high-fill');
     icon.classList.add('bi-moon-fill');
+    toggleText.textContent = ' Cambiar a Modo Oscuro';
+    toggleButton.classList.add('btn-outline-secondary');
+    toggleButton.classList.remove('btn-outline-light');
     localStorage.setItem('darkMode', 'disabled');
   }
 
