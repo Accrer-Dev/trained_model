@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block page_content %}
-  <div class="container">
-    <div class="row shadow-lg p-3 mb-5 bg-body rounded">
+  <div class="container" id="page-container">
+    <div class="row shadow-lg p-3 mb-5 rounded">
       <h1 class="display-1 text-center fw-bold">Predecir Evaluación</h1>
     </div>
-    <div class="row shadow-lg p-4 mb-5 bg-dark text-light rounded">
+    <div class="row shadow-lg p-4 mb-5 rounded" id="form-container">
       <div class="col-md-3"></div>
       <div class="col-md-6">
         <form class="row g-4" action="/grades/predict" method="post">
@@ -172,8 +172,35 @@
           </div>
         </form>
       </div>
-
       <div class="col-md-3"></div>
     </div>
+    <div class="position-fixed top-0 end-0 m-3">
+      <button id="toggle-mode-btn" class="btn btn-outline-secondary">Cambiar a Modo Claro</button>
+    </div>
   </div>
+  <script>
+    const toggleBtn = document.getElementById('toggle-mode-btn');
+    const pageContainer = document.getElementById('page-container');
+    const formContainer = document.getElementById('form-container');
+
+    toggleBtn.addEventListener('click', () => {
+      if (document.body.classList.contains('bg-dark')) {
+        document.body.classList.remove('bg-dark', 'text-light');
+        document.body.classList.add('bg-light', 'text-dark');
+        pageContainer.classList.remove('bg-dark', 'text-light');
+        pageContainer.classList.add('bg-light', 'text-dark');
+        formContainer.classList.remove('bg-dark');
+        formContainer.classList.add('bg-body');
+        toggleBtn.textContent = 'Cambiar a Modo Oscuro';
+      } else {
+        document.body.classList.remove('bg-light', 'text-dark');
+        document.body.classList.add('bg-dark', 'text-light');
+        pageContainer.classList.remove('bg-light', 'text-dark');
+        pageContainer.classList.add('bg-dark', 'text-light');
+        formContainer.classList.remove('bg-body');
+        formContainer.classList.add('bg-dark');
+        toggleBtn.textContent = 'Cambiar a Modo Claro';
+      }
+    });
+  </script>
 {% endblock %}
