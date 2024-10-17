@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block page_content %}
   <div class="container" id="page-container">
-    <div class="row shadow-lg p-3 mb-5 rounded">
+    <div class="row shadow-lg p-3 mb-5 rounded" id="header-container">
       <h1 class="display-1 text-center fw-bold">Predecir Evaluación</h1>
     </div>
     <div class="row shadow-lg p-4 mb-5 rounded" id="form-container">
@@ -167,7 +167,7 @@
             {{ form.g1_conduct }}
           </div>
           <div class="col-12 text-center">
-            <button type="submit" class="btn btn-success btn-lg rounded-pill me-3">Predecir Evaluación</button>
+            <button type="submit" class="btn btn-success btn-lg rounded-pill me-3 predict-btn">Predecir Evaluación</button>
             <a href="{% url 'index' %}" class="btn btn-outline-light btn-lg rounded-pill">Volver</a>
           </div>
         </form>
@@ -182,25 +182,63 @@
     const toggleBtn = document.getElementById('toggle-mode-btn');
     const pageContainer = document.getElementById('page-container');
     const formContainer = document.getElementById('form-container');
+    const headerContainer = document.getElementById('header-container');
+    const predictBtn = document.querySelector('.predict-btn');
+
+    // Verificar el modo actual al cargar la página
+    if (localStorage.getItem('darkMode') === 'enabled') {
+      enableDarkMode();
+    }
 
     toggleBtn.addEventListener('click', () => {
       if (document.body.classList.contains('bg-dark')) {
-        document.body.classList.remove('bg-dark', 'text-light');
-        document.body.classList.add('bg-light', 'text-dark');
-        pageContainer.classList.remove('bg-dark', 'text-light');
-        pageContainer.classList.add('bg-light', 'text-dark');
-        formContainer.classList.remove('bg-dark');
-        formContainer.classList.add('bg-body');
-        toggleBtn.textContent = 'Cambiar a Modo Oscuro';
+        disableDarkMode();
       } else {
-        document.body.classList.remove('bg-light', 'text-dark');
-        document.body.classList.add('bg-dark', 'text-light');
-        pageContainer.classList.remove('bg-light', 'text-dark');
-        pageContainer.classList.add('bg-dark', 'text-light');
-        formContainer.classList.remove('bg-body');
-        formContainer.classList.add('bg-dark');
-        toggleBtn.textContent = 'Cambiar a Modo Claro';
+        enableDarkMode();
       }
     });
+
+    function enableDarkMode() {
+      document.body.classList.add('bg-dark', 'text-light');
+      pageContainer.classList.add('bg-dark', 'text-light');
+      formContainer.classList.add('bg-dark', 'text-light');
+      headerContainer.classList.add('bg-dark');
+      toggleBtn.textContent = 'Cambiar a Modo Claro';
+      predictBtn.classList.add('btn-glow');
+      localStorage.setItem('darkMode', 'enabled');
+    }
+
+    function disableDarkMode() {
+      document.body.classList.remove('bg-dark', 'text-light');
+      pageContainer.classList.remove('bg-dark', 'text-light');
+      formContainer.classList.remove('bg-dark', 'text-light');
+      headerContainer.classList.remove('bg-dark');
+      toggleBtn.textContent = 'Cambiar a Modo Oscuro';
+      predictBtn.classList.remove('btn-glow');
+      localStorage.setItem('darkMode', 'disabled');
+    }
+
+    predictBtn.addEventListener('mouseenter', () => {
+      if (document.body.classList.contains('bg-dark')) {
+        predictBtn.classList.add('btn-glow-hover');
+      }
+    });
+
+    predictBtn.addEventListener('mouseleave', () => {
+      predictBtn.classList.remove('btn-glow-hover');
+    });
   </script>
+  <style>
+    .predict-btn {
+      transition: box-shadow 0.3s ease;
+    }
+
+    .predict-btn.btn-glow {
+      box-shadow: none;
+    }
+
+    .predict-btn.btn-glow-hover {
+      box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.2);
+    }
+  </style>
 {% endblock %}
