@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% block page_content %}
-<div class="container mt-4">
+<div class="container mt-4" id="page-container">
+  <!-- Botón de Modo Oscuro/Claro -->
+  <div class="position-fixed top-0 end-0 m-3">
+    <button id="toggleDarkMode" class="btn btn-lg btn-outline-primary">
+      <i class="bi bi-moon-fill"></i> Cambiar Modo
+    </button>
+  </div>
+
   <!-- Header -->
   <div class="row shadow-lg p-4 mb-4 bg-primary text-white rounded">
     <h1 class="display-5 text-center">Historial de Evaluaciones</h1>
@@ -39,9 +46,9 @@
   </div>
 
   <!-- Tabla de Evaluaciones -->
-  <div class="row shadow-lg p-4 mb-5 bg-white rounded">
+  <div class="row shadow-lg p-4 mb-5 rounded" id="table-container">
     <div class="table-responsive">
-      <table class="table table-striped table-hover align-middle">
+      <table class="table table-striped table-hover align-middle" id="evaluation-table">
         <thead class="table-dark">
           <tr>
             <th scope="col">ID</th>
@@ -51,6 +58,7 @@
             <th scope="col">Calificación Final</th>
             <th scope="col">Predicción IA</th>
             <th scope="col">Resultado del Profesor</th>
+            <th scope="col">Verificación</th>
           </tr>
         </thead>
         <tbody id="evaluationTable">
@@ -63,10 +71,11 @@
             <td>{{ grade.gf }}</td>
             <td>{{ grade.predicted_evaluation }}</td>
             <td>{{ grade.final_evaluation }}</td>
+            <td>{% if grade.predicted_evaluation == grade.final_evaluation %}Correcto{% else %}Incorrecto{% endif %}</td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="7" class="text-center">No hay datos para mostrar.</td>
+            <td colspan="8" class="text-center">No hay datos para mostrar.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -75,7 +84,7 @@
   </div>
 
   <!-- Resúmenes / Macros -->
-  <div class="row shadow-lg p-2 mb-5 bg-light rounded justify-content-center">
+  <div class="row shadow-lg p-2 mb-5 rounded justify-content-center" id="summary-container">
     <div class="col-md-2 mb-3">
       <div class="p-3 bg-success text-white text-center rounded">
         <h5>Total de Evaluaciones</h5>
@@ -117,7 +126,7 @@
   </div>
 
   <!-- Gráficos -->
-  <div class="row shadow-lg p-4 mb-5 bg-white rounded">
+  <div class="row shadow-lg p-4 mb-5 rounded" id="charts-container">
     <div class="col-md-4">
       <h5 class="text-center">Número de Aprobados (IA vs Real)</h5>
       <canvas id="approvalChart" style="height: 250px;"></canvas>
@@ -131,7 +140,7 @@
       <canvas id="disapprovalChart" style="height: 250px;"></canvas>
     </div>
   </div>
-  <div class="row shadow-lg p-4 mb-5 bg-white rounded">
+  <div class="row shadow-lg p-4 mb-5 rounded">
     <div class="col-md-6">
       <h5 class="text-center">Distribución de Aprobados vs Desaprobados (IA)</h5>
       <canvas id="pieChartIA" style="height: 250px;"></canvas>
@@ -143,7 +152,7 @@
   </div>
 </div>
 
-<!-- Script para búsqueda dinámica, resumen de resultados y gráficos -->
+<!-- Script para búsqueda dinámica, resumen de resultados, gráficos y modo oscuro -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.getElementById('searchInput').addEventListener('keyup', filterTable);
@@ -384,6 +393,55 @@
         }
       });
     }
+  }
+
+  // Modo Oscuro/Claro (Actualizado)
+  const toggleButton = document.getElementById('toggleDarkMode');
+  const icon = toggleButton.querySelector('i');
+  const text = document.createTextNode(' Cambiar Modo');
+  toggleButton.appendChild(text);
+
+  // Verificar el modo actual al cargar la página
+  if (localStorage.getItem('darkMode') === 'enabled') {
+    enableDarkMode();
+  }
+
+  toggleButton.addEventListener('click', () => {
+    if (document.body.classList.contains('bg-dark')) {
+      disableDarkMode();
+    } else {
+      enableDarkMode();
+    }
+  });
+
+  function enableDarkMode() {
+    document.body.classList.add('bg-dark', 'text-light');
+    const containers = document.querySelectorAll('#page-container, #table-container, #summary-container, #charts-container');
+    containers.forEach(container => {
+      container.classList.add('bg-dark', 'text-light');
+    });
+    const tables = document.querySelectorAll('#evaluation-table');
+    tables.forEach(table => {
+      table.classList.add('table-dark');
+    });
+    icon.classList.remove('bi-moon-fill');
+    icon.classList.add('bi-brightness-high-fill');
+    localStorage.setItem('darkMode', 'enabled');
+  }
+
+  function disableDarkMode() {
+    document.body.classList.remove('bg-dark', 'text-light');
+    const containers = document.querySelectorAll('#page-container, #table-container, #summary-container, #charts-container');
+    containers.forEach(container => {
+      container.classList.remove('bg-dark', 'text-light');
+    });
+    const tables = document.querySelectorAll('#evaluation-table');
+    tables.forEach(table => {
+      table.classList.remove('table-dark');
+    });
+    icon.classList.remove('bi-brightness-high-fill');
+    icon.classList.add('bi-moon-fill');
+    localStorage.setItem('darkMode', 'disabled');
   }
 
   // Ejecutar la función de filtrado al cargar la página para actualizar los resúmenes
