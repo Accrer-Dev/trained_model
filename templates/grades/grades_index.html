@@ -97,7 +97,7 @@
             </td>
             <!-- Botón para eliminar -->
             <td>
-              <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete('{{ grade.student_code }}')">
+              <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete('{{ grade.id }}')">
                 <i class="bi bi-trash-fill"></i> <!-- Icono de basura -->
               </button>
             </td>
@@ -497,10 +497,10 @@
   }
 
   // Confirmación de Eliminación
-  function confirmDelete(studentCode) {
-    if (confirm("¿Estás seguro de que deseas eliminar la predicción para el ID: " + studentCode + "?")) {
-      // Redirige a la URL de eliminación
-      window.location.href = "/delete/" + studentCode + "/";
+  function confirmDelete(gradeId) {
+    if (confirm("¿Estás seguro de que deseas eliminar la predicción con ID: " + gradeId + "?")) {
+      // Redirige a la URL de eliminación correcta
+      window.location.href = "/delete/" + gradeId + "/";
     }
   }
   

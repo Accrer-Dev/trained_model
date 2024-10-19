@@ -275,15 +275,12 @@ def download_excel(request):
 
 
 # Eliminar una predicción individual
-def delete_prediction(request, student_code):
-    # Filtra todos los objetos que coinciden con el código del estudiante
-    predictions = StudentRate.objects.filter(student_code=student_code)
+def delete_prediction(request, grade_id):
+    # Obtén el objeto que coincide con el id único
+    prediction = get_object_or_404(StudentRate, id=grade_id)
 
-    if not predictions.exists():
-        raise Http404("No se encontraron predicciones para eliminar.")
-
-    # Elimina todas las predicciones que coincidan con el código del estudiante
-    predictions.delete()
+    # Elimina la predicción específica
+    prediction.delete()
 
     # Redirige al usuario de vuelta a la página de evaluaciones
     return redirect('/grades')
