@@ -5,6 +5,9 @@ from .models import StudentRate
 import csv
 from django.http import HttpResponse
 import openpyxl
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.http import Http404
 
 def home(request):
     return render(request, "grades/home.html", {})
@@ -260,3 +263,27 @@ def download_excel(request):
     wb.save(response)
 
     return response
+
+
+# Eliminar una predicción individual
+def delete_prediction(request, student_code):
+    # Filtra todos los objetos que coinciden con el código del estudiante
+    predictions = StudentRate.objects.filter(student_code=student_code)
+
+    if not predictions.exists():
+        raise Http404("No se encontraron predicciones para eliminar.")
+
+    # Elimina todas las predicciones que coincidan con el código del estudiante
+    predictions.delete()
+
+    # Redirige al usuario de vuelta a la página de evaluaciones
+    return redirect('/grades')
+
+
+# Eliminar todas las predicciones
+def delete_all_predictions(request):
+    if request.method == 'POST':
+        StudentRate.objects.all().delete()
+        messages.success(request, 'Todas las predicciones han sido eliminadas correctamente.')
+    
+    return redirect('/grades')

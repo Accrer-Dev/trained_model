@@ -44,6 +44,13 @@
           <i class="bi bi-file-earmark-excel-fill"></i> Excel
         </a>
       </div>
+      <!-- Botón para eliminar todas las predicciones -->
+      <form action="{% url 'delete_all_predictions' %}" method="POST" class="d-inline-block mt-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar todas las predicciones? Esta acción no se puede deshacer.')">
+          <i class="bi bi-trash-fill"></i> Eliminar Todo
+        </button>
+      </form>
     </div>
   </div>
 
@@ -87,13 +94,19 @@
                 <span class="text-danger fw-bold" style="font-size: 1.2em;">Incorrecto</span>
               {% endif %}
             </td>
+            <td>
+              <!-- Botón para eliminar individualmente -->
+              <a href="{% url 'delete_prediction' grade.student_code %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar esta predicción?')">
+                <i class="bi bi-trash-fill"></i> Eliminar
+              </a>
+            </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="8" class="text-center">No hay datos para mostrar.</td>
+            <td colspan="9" class="text-center">No hay datos para mostrar.</td>
           </tr>
           {% endfor %}
-        </tbody>
+        </tbody>        
       </table>
     </div>
   </div>
