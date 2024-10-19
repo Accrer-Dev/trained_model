@@ -35,7 +35,13 @@
           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
         </svg> Agregar Nueva Evaluación
       </button>
-      <div class="d-inline-block mt-2">
+    </div>
+  </div>
+
+  <!-- Botones para exportar y eliminar encima de la tabla -->
+  <div class="row mb-3">
+    <div class="col-md-6 text-md-start text-center">
+      <div class="d-inline-block">
         <span class="me-2">Exportar por:</span>
         <a id="csvLink" href="{% url 'download_csv' %}" class="btn btn-outline-primary btn-sm me-2">
           <i class="bi bi-file-earmark-spreadsheet-fill"></i> CSV
@@ -44,8 +50,10 @@
           <i class="bi bi-file-earmark-excel-fill"></i> Excel
         </a>
       </div>
+    </div>
+    <div class="col-md-6 text-md-end text-center">
       <!-- Botón para eliminar todas las predicciones -->
-      <form action="{% url 'delete_all_predictions' %}" method="POST" class="d-inline-block mt-2">
+      <form action="{% url 'delete_all_predictions' %}" method="POST" class="d-inline-block">
         {% csrf_token %}
         <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar todas las predicciones? Esta acción no se puede deshacer.')">
           <i class="bi bi-trash-fill"></i> Eliminar Todo
@@ -54,6 +62,7 @@
     </div>
   </div>
 
+  
   <!-- Indicador de Resultados -->
   <div class="row mb-2">
     <div class="col-md-12">
