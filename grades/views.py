@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from .forms import RatePredictionForm, PredictionResultForm
 from .predictor import GradeMLPredictor
 from .models import StudentRate
-
+import csv
+from django.http import HttpResponse
+import openpyxl
 
 def home(request):
     return render(request, "grades/home.html", {})
@@ -164,3 +166,60 @@ def predict(request):
         form = RatePredictionForm()
 
     return render(request, "grades/grades_predict.html", {"form": form})
+
+def download_csv(request):
+    # Crear la respuesta HTTP con el tipo de contenido de CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="student_rates.csv"'
+
+    # Crear el escritor de CSV
+    writer = csv.writer(response)
+    # Escribir el encabezado de las columnas
+    writer.writerow(['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor'])
+
+    # Escribir los datos de la base de datos
+    student_rates = StudentRate.objects.all()
+    for rate in student_rates:
+        writer.writerow([
+            rate.student_code,
+            rate.name,
+            rate.year,
+            rate.course,
+            rate.gf,
+            rate.predicted_evaluation,
+            rate.final_evaluation,
+        ])
+
+    return response
+
+def download_excel(request):
+    # Crear la respuesta HTTP con el tipo de contenido para Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="student_rates.xlsx"'
+
+    # Crear el libro de Excel y la hoja de trabajo
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Student Rates"
+
+    # Escribir el encabezado
+    headers = ['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor']
+    ws.append(headers)
+
+    # Escribir los datos de la base de datos
+    student_rates = StudentRate.objects.all()
+    for rate in student_rates:
+        ws.append([
+            rate.student_code,
+            rate.name,
+            rate.year,
+            rate.course,
+            rate.gf,
+            rate.predicted_evaluation,
+            rate.final_evaluation,
+        ])
+
+    # Guardar el archivo Excel en la respuesta
+    wb.save(response)
+
+    return response
