@@ -170,10 +170,11 @@ def predict(request):
 
     return render(request, "grades/grades_predict.html", {"form": form})
 
+
 def download_csv(request):
     # Obtener los filtros desde la solicitud GET
     filter_by = request.GET.get('filter_by', 'all')
-    search_value = request.GET.get('search', '').lower().strip()
+    search_value = request.GET.get('search', '').strip().lower()
 
     # Filtrar los datos según los filtros aplicados en la vista actual
     student_rates = StudentRate.objects.all()
@@ -186,9 +187,11 @@ def download_csv(request):
         elif filter_by == "2":
             student_rates = student_rates.filter(course__icontains=search_value)
         elif filter_by == "5":
-            student_rates = student_rates.filter(predicted_evaluation__icontains=search_value)
+            # Comparación exacta para "Predicción IA"
+            student_rates = student_rates.filter(predicted_evaluation__iexact=search_value)
         elif filter_by == "6":
-            student_rates = student_rates.filter(final_evaluation__icontains=search_value)
+            # Comparación exacta para "Resultado del Profesor"
+            student_rates = student_rates.filter(final_evaluation__iexact=search_value)
 
     # Crear la respuesta HTTP con el tipo de contenido de CSV
     response = HttpResponse(content_type='text/csv')
@@ -196,11 +199,12 @@ def download_csv(request):
 
     # Crear el escritor de CSV
     writer = csv.writer(response)
-    # Escribir el encabezado de las columnas
-    writer.writerow(['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor'])
+    # Escribir el encabezado de las columnas, incluyendo la columna "Acertado"
+    writer.writerow(['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor', 'Acertado'])
 
     # Escribir los datos filtrados de la base de datos
     for rate in student_rates:
+        acertado = "Correcto" if rate.predicted_evaluation.lower() == rate.final_evaluation.lower() else "Incorrecto"
         writer.writerow([
             rate.student_code,
             rate.name,
@@ -209,15 +213,15 @@ def download_csv(request):
             rate.gf,
             rate.predicted_evaluation,
             rate.final_evaluation,
+            acertado,
         ])
 
     return response
 
-
 def download_excel(request):
     # Obtener los filtros desde la solicitud GET
     filter_by = request.GET.get('filter_by', 'all')
-    search_value = request.GET.get('search', '').lower().strip()
+    search_value = request.GET.get('search', '').strip().lower()
 
     # Filtrar los datos según los filtros aplicados en la vista actual
     student_rates = StudentRate.objects.all()
@@ -230,9 +234,11 @@ def download_excel(request):
         elif filter_by == "2":
             student_rates = student_rates.filter(course__icontains=search_value)
         elif filter_by == "5":
-            student_rates = student_rates.filter(predicted_evaluation__icontains=search_value)
+            # Comparación exacta para "Predicción IA"
+            student_rates = student_rates.filter(predicted_evaluation__iexact=search_value)
         elif filter_by == "6":
-            student_rates = student_rates.filter(final_evaluation__icontains=search_value)
+            # Comparación exacta para "Resultado del Profesor"
+            student_rates = student_rates.filter(final_evaluation__iexact=search_value)
 
     # Crear la respuesta HTTP con el tipo de contenido para Excel
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -243,12 +249,13 @@ def download_excel(request):
     ws = wb.active
     ws.title = "Student Rates"
 
-    # Escribir el encabezado
-    headers = ['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor']
+    # Escribir el encabezado, incluyendo la columna "Acertado"
+    headers = ['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor', 'Acertado']
     ws.append(headers)
 
     # Escribir los datos filtrados de la base de datos
     for rate in student_rates:
+        acertado = "Correcto" if rate.predicted_evaluation.lower() == rate.final_evaluation.lower() else "Incorrecto"
         ws.append([
             rate.student_code,
             rate.name,
@@ -257,12 +264,14 @@ def download_excel(request):
             rate.gf,
             rate.predicted_evaluation,
             rate.final_evaluation,
+            acertado,
         ])
 
     # Guardar el archivo Excel en la respuesta
     wb.save(response)
 
     return response
+
 
 
 # Eliminar una predicción individual
