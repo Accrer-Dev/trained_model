@@ -37,10 +37,10 @@
       </button>
       <div class="d-inline-block mt-2">
         <span class="me-2">Exportar por:</span>
-        <a href="{% url 'download_csv' %}" class="btn btn-outline-primary btn-sm me-2">
+        <a id="csvLink" href="{% url 'download_csv' %}" class="btn btn-outline-primary btn-sm me-2">
           <i class="bi bi-file-earmark-spreadsheet-fill"></i> CSV
         </a>
-        <a href="{% url 'download_excel' %}" class="btn btn-outline-success btn-sm">
+        <a id="excelLink" href="{% url 'download_excel' %}" class="btn btn-outline-success btn-sm">
           <i class="bi bi-file-earmark-excel-fill"></i> Excel
         </a>
       </div>
@@ -464,8 +464,31 @@
     localStorage.setItem('darkMode', 'disabled');
   }
 
-  // Ejecutar la función de filtrado al cargar la página para actualizar los resúmenes
-  window.onload = filterTable;
+  // Actualizar enlaces de descarga según el filtro y la búsqueda actual
+  function updateDownloadLinks() {
+    const filterBy = document.getElementById('filterBy').value;
+    const searchValue = document.getElementById('searchInput').value.trim();
+
+    const csvLink = document.getElementById('csvLink');
+    const excelLink = document.getElementById('excelLink');
+
+    const queryParams = `?filter_by=${filterBy}&search=${encodeURIComponent(searchValue)}`;
+
+    csvLink.href = csvLink.href.split('?')[0] + queryParams;
+    excelLink.href = excelLink.href.split('?')[0] + queryParams;
+  }
+
+
+  
+  // Actualizar los enlaces de descarga cuando se cambian los filtros o la búsqueda
+  document.getElementById('filterBy').addEventListener('change', updateDownloadLinks);
+  document.getElementById('searchInput').addEventListener('keyup', updateDownloadLinks);
+
+  // Ejecutar la actualización al cargar la página para tener los enlaces correctos inicialmente
+  window.onload = function () {
+    filterTable(); // Filtrar la tabla al cargar
+    updateDownloadLinks(); // Actualizar enlaces de descarga al cargar
+  };
 </script>
 
 {% endblock %}

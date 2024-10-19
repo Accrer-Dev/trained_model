@@ -168,17 +168,35 @@ def predict(request):
     return render(request, "grades/grades_predict.html", {"form": form})
 
 def download_csv(request):
+    # Obtener los filtros desde la solicitud GET
+    filter_by = request.GET.get('filter_by', 'all')
+    search_value = request.GET.get('search', '').lower().strip()
+
+    # Filtrar los datos según los filtros aplicados en la vista actual
+    student_rates = StudentRate.objects.all()
+
+    if filter_by != 'all' and search_value:
+        if filter_by == "0":
+            student_rates = student_rates.filter(student_code__icontains=search_value)
+        elif filter_by == "1":
+            student_rates = student_rates.filter(name__icontains=search_value)
+        elif filter_by == "2":
+            student_rates = student_rates.filter(course__icontains=search_value)
+        elif filter_by == "5":
+            student_rates = student_rates.filter(predicted_evaluation__icontains=search_value)
+        elif filter_by == "6":
+            student_rates = student_rates.filter(final_evaluation__icontains=search_value)
+
     # Crear la respuesta HTTP con el tipo de contenido de CSV
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="student_rates.csv"'
+    response['Content-Disposition'] = 'attachment; filename="student_rates_filtered.csv"'
 
     # Crear el escritor de CSV
     writer = csv.writer(response)
     # Escribir el encabezado de las columnas
     writer.writerow(['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor'])
 
-    # Escribir los datos de la base de datos
-    student_rates = StudentRate.objects.all()
+    # Escribir los datos filtrados de la base de datos
     for rate in student_rates:
         writer.writerow([
             rate.student_code,
@@ -192,10 +210,30 @@ def download_csv(request):
 
     return response
 
+
 def download_excel(request):
+    # Obtener los filtros desde la solicitud GET
+    filter_by = request.GET.get('filter_by', 'all')
+    search_value = request.GET.get('search', '').lower().strip()
+
+    # Filtrar los datos según los filtros aplicados en la vista actual
+    student_rates = StudentRate.objects.all()
+
+    if filter_by != 'all' and search_value:
+        if filter_by == "0":
+            student_rates = student_rates.filter(student_code__icontains=search_value)
+        elif filter_by == "1":
+            student_rates = student_rates.filter(name__icontains=search_value)
+        elif filter_by == "2":
+            student_rates = student_rates.filter(course__icontains=search_value)
+        elif filter_by == "5":
+            student_rates = student_rates.filter(predicted_evaluation__icontains=search_value)
+        elif filter_by == "6":
+            student_rates = student_rates.filter(final_evaluation__icontains=search_value)
+
     # Crear la respuesta HTTP con el tipo de contenido para Excel
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="student_rates.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="student_rates_filtered.xlsx"'
 
     # Crear el libro de Excel y la hoja de trabajo
     wb = openpyxl.Workbook()
@@ -206,8 +244,7 @@ def download_excel(request):
     headers = ['ID', 'Nombre', 'Año', 'Curso', 'Calificación Final', 'Predicción IA', 'Resultado del Profesor']
     ws.append(headers)
 
-    # Escribir los datos de la base de datos
-    student_rates = StudentRate.objects.all()
+    # Escribir los datos filtrados de la base de datos
     for rate in student_rates:
         ws.append([
             rate.student_code,
