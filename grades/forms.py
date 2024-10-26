@@ -1,4 +1,5 @@
 from django import forms
+import re
 
 
 class RatePredictionForm(forms.Form):
@@ -279,6 +280,13 @@ class RatePredictionForm(forms.Form):
         ),
         required=True,
     )
+
+    
+    def clean_student_code(self):
+        code = self.cleaned_data.get('student_code')
+        if not re.match(r'^ID\d{6}$', code):
+            raise forms.ValidationError("El código debe seguir el formato: ID seguido de 6 dígitos (ejemplo: ID000234).")
+        return code
 
 
 class PredictionResultForm(forms.Form):

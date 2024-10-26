@@ -192,6 +192,22 @@
     predictBtn.addEventListener('mouseleave', () => {
       predictBtn.classList.remove('btn-glow-hover');
     });
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+      // Obtén el valor del campo student_code
+      const studentCodeInput = document.getElementById('{{ form.student_code.id_for_label }}');
+      const studentCodeValue = studentCodeInput.value;
+  
+      // Expresión regular para verificar que el formato sea 'ID' seguido de 6 dígitos
+      const studentCodePattern = /^ID\d{6}$/;
+  
+      // Verificar si el valor coincide con el patrón esperado
+      if (!studentCodePattern.test(studentCodeValue)) {
+        // Mostrar un mensaje de error al usuario y evitar el envío del formulario
+        alert("El código debe seguir el formato: ID seguido de 6 dígitos (ejemplo: ID000234).");
+        event.preventDefault();
+      }
+    });
   </script>
   <style>
     .predict-btn {
