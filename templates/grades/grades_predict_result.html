@@ -1,12 +1,6 @@
 {% extends 'base.html' %}
 {% block page_content %}
   <div class="container" id="page-container">
-    <!-- Botón de Modo Oscuro/Claro -->
-    <div class="position-fixed top-0 end-0 m-3">
-      <button id="toggleDarkMode" class="btn btn-lg btn-outline-primary">
-        <i class="bi bi-moon-fill"></i> Cambiar Modo
-      </button>
-    </div>
 
     <div class="row shadow-lg p-3 mb-5 rounded" id="header-container">
       <h1 class="display-1 text-center fw-bold">Resultado de la Predicción</h1>
@@ -168,55 +162,7 @@
     </div>
   </div>
 
-  <!-- Script para modo oscuro y validación de formulario -->
   <script>
-    const toggleButton = document.getElementById('toggleDarkMode');
-    const icon = toggleButton.querySelector('i');
-    const cancelButton = document.getElementById('cancel-button');
-
-    // Verificar el modo actual al cargar la página
-    if (localStorage.getItem('darkMode') === 'enabled') {
-      enableDarkMode();
-    }
-
-    toggleButton.addEventListener('click', () => {
-      if (document.body.classList.contains('bg-dark')) {
-        disableDarkMode();
-      } else {
-        enableDarkMode();
-      }
-    });
-
-    function enableDarkMode() {
-      document.body.classList.add('bg-dark', 'text-light');
-      const containers = document.querySelectorAll('#page-container, #form-container, #header-container');
-      containers.forEach(container => {
-        container.classList.add('bg-dark', 'text-light');
-      });
-      icon.classList.remove('bi-moon-fill');
-      icon.classList.add('bi-brightness-high-fill');
-      toggleButton.classList.remove('btn-outline-primary');
-      toggleButton.classList.add('btn-outline-light');
-      cancelButton.classList.remove('btn-dark');
-      cancelButton.classList.add('btn-outline-light');
-      localStorage.setItem('darkMode', 'enabled');
-    }
-
-    function disableDarkMode() {
-      document.body.classList.remove('bg-dark', 'text-light');
-      const containers = document.querySelectorAll('#page-container, #form-container, #header-container');
-      containers.forEach(container => {
-        container.classList.remove('bg-dark', 'text-light');
-      });
-      icon.classList.remove('bi-brightness-high-fill');
-      icon.classList.add('bi-moon-fill');
-      toggleButton.classList.remove('btn-outline-light');
-      toggleButton.classList.add('btn-outline-primary');
-      cancelButton.classList.remove('btn-outline-light');
-      cancelButton.classList.add('btn-dark');
-      localStorage.setItem('darkMode', 'disabled');
-    }
-
     function validateForm() {
       let isValid = true;
       const requiredFields = ['gf', 'final_evaluation'];
